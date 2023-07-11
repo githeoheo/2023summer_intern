@@ -33,9 +33,6 @@ stock_df.loc[:,'Date'] = pd.to_datetime(stock_df.Date)
 stock_df = stock_df.set_index('Date')
 ```
 
-
-
-      
 > ### 데이터 전처리(결측치/중복치)
 - 필요없는 행열 삭제하기(axis = 0 : 행 / axis = 1 : 열 / 생략 시 0 디폴트)
 ```python
