@@ -53,6 +53,8 @@ print(fund_df[fund_df.duplicated()])
 ```python
 df.drop_duplicates(['컬럼'], keep = 'first')
 ```
+
+
 ---
 ## 분석그래프(원본, min-max정규화, 상관분석)
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/40f62e69-5ab0-4c56-a9cc-debbea264041)
