@@ -32,6 +32,25 @@ stock_df.loc[:,'Date'] = pd.to_datetime(stock_df.Date)
 ```python
 stock_df = stock_df.set_index('Date')
 ```
+---
+> ## 데이터 전처리(결측치/중복치)
+- 필요없는 행열 삭제하기(axis = 0 : 행 / axis = 1 : 열 / 생략 시 0 디폴트)
+```python
+stock_df = stock_df.drop(['Open', 'High', 'Low', 'Adj Close', 'Volume'], axis = 1) 
+```
 
-- 
+- 결측치가 있는 행 or 열 제거하는 함수(axis = 0 : 행 / axis = 1 : 열 / 생략 시 0 디폴트)
+```python
+stock_df = stock_df.dropna(axis=0)
+```
+
+- 중복데이터 확인하기
+```python
+print(fund_df[fund_df.duplicated()])
+```
+
+- 중복데이터 삭제하기
+```python
+df.drop_duplicates(['컬럼'], keep = 'first')
+```
 
