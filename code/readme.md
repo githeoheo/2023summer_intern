@@ -76,3 +76,6 @@ df.drop_duplicates(['컬럼'], keep = 'first')
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/2e6e2df4-c916-4e5b-9a8a-dac30751c7a2)
 - 상관관계 분석 결과 나스닥과 SnP 가 양의 관계인 것으로 보아 분석은 잘되는 것으로 확인된다
 - 하지만 5가지 지표의 관계를 알아내기에 좋은 방법으로 느껴지지 않는다
+
+## 궁금한점
+- 위 수익률 상관분석에서 
