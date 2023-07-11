@@ -12,14 +12,17 @@ from matplotlib.patches import Rectangle
 from statsmodels.stats.weightstats import ztest
 from statsmodels.tsa.seasonal import seasonal_decompose
 
+import scipy.stats as stats
+
 ### CSV 파일 불러오기
 stock_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/나스닥(1985~2023)_yfinance.csv')
 gold_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/금(1950~2023)_캐글.csv')
 fund_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/미국금리(1954.7~2023.5)_구글서치.csv')
 house_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
 bond_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/10년만기 미국채 선물 과거 데이터.csv')
-gdp_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/세계GDP성장률_캐글(1961~2020).csv')
+gdp_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/세계GDP성장률_캐글(1961~2020)_month.csv')
 snp_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/S&P 500 과거 데이터 Feb 1970 ~.csv')
+unemploy_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/US_Unemployment(1950~2023.07)_kag.csv')
 
 ### 불러온 데이터 확인하기
 # print(stock_df.head)
@@ -35,17 +38,19 @@ fund_df = fund_df.rename(columns={'FEDFUNDS':'Funds_Rate', "DATE":"Date"})
 house_df = house_df.rename(columns={'SPCS10RSA':'House_Price', "DATE":"Date"})
 bond_df = bond_df.rename(columns={'날짜':'Date', '종가':'Bond_Close'})
 snp_df = snp_df.rename(columns={'날짜':'Date', '종가':'Snp_Close'})
+unemploy_df = unemploy_df.rename(columns={'Unemplyment Rate':'Unemployment_Rate'})
 
 ### 불러올 날짜 구간 설정(공통 1987-01-01 ~ 2023-07-01)
 start = "2019-11-01" # 최소 1950-01-01
-end = "2020-03-01" # 최대 2023-07-01
+end = "2020-12-01" # 최대 2023-07-01
 stock_df = stock_df[stock_df['Date'].between(start, end)]
 gold_df = gold_df[gold_df['Date'].between(start, end)]
 fund_df = fund_df[fund_df['Date'].between(start, end)]
 house_df = house_df[house_df['Date'].between(start, end)]
 bond_df = bond_df[bond_df['Date'].between(start, end)]
 snp_df = snp_df[snp_df['Date'].between(start, end)]
-
+unemploy_df = unemploy_df[unemploy_df['Date'].between('1961-01-01', '2023-07-01')]
+unemploy_df = unemploy_df[['Date', 'Unemployment_Rate']]
 # gdp_df = gdp_df[gdp_df['Date'] >= '1990-07-01']
 
 ### 날짜 datatime 형식으로 전환하기
@@ -56,6 +61,8 @@ house_df.loc[:,'Date'] = pd.to_datetime(house_df.Date)
 bond_df.loc[:,'Date'] = pd.to_datetime(bond_df.Date)
 gdp_df.loc[:,'Date'] = pd.to_datetime(gdp_df.Date)
 snp_df.loc[:,'Date'] = pd.to_datetime(snp_df.Date)
+unemploy_df.loc[:,'Date'] = pd.to_datetime(unemploy_df.Date)
+
 
 ### index를 날짜로 변경하기
 stock_df = stock_df.set_index('Date')
@@ -65,6 +72,8 @@ house_df = house_df.set_index('Date')
 bond_df = bond_df.set_index('Date')
 gdp_df = gdp_df.set_index('Date')
 snp_df = snp_df.set_index('Date')
+unemploy_df = unemploy_df.set_index('Date')
+
 
 ### 특정 열의 타입 변경하기
 # snp_df = snp_df.astype({'Snp_Close' : 'float64'})
@@ -104,6 +113,7 @@ snp_df = snp_df.set_index('Date')
 # print(bond_df.isna().sum())
 # print(stock_df.isnull().sum()) # 컬럼 별 결측치 확인
 # print(len(stock_df)-stock_df.count()) # 컬럼 별 결측치 확인
+gdp_df = gdp_df.interpolate(method = "time") # 선형보간법으로 채우기(method = value : 선형 / method = time : 시간)
 
 ### 특정 칼럼(열) 삭제
 stock_df = stock_df.drop(['Open', 'High', 'Low', 'Adj Close', 'Volume'], axis = 1)
@@ -116,6 +126,8 @@ fund_df = fund_df.dropna(axis=0)
 house_df = house_df.dropna(axis=0)
 bond_df = bond_df.dropna(axis=0)
 snp_df = snp_df.dropna(axis=0)
+unemploy_df = unemploy_df.dropna(axis=1)
+gdp_df = gdp_df.dropna(axis=1)
 # df = df[['컬럼1', '컬럼2']].dropna()
 
 ### 결측치 채우기
@@ -199,16 +211,81 @@ snp_df = snp_df.dropna(axis=0)
 
 
 
+
 #######---------------------------------------- 그래프그리기 ----------------------------------------------------######
-plt.title('GDP GROWTH IN UNITED STATE', fontsize=20) 
+scaler = MinMaxScaler() # min-max 정규화를 위한 스케일러
+plt.rcParams["figure.figsize"] = (16,8)
+# 유니코드 깨짐현상 해결
+plt.rcParams['axes.unicode_minus'] = False
+ 
+# 나눔고딕 폰트 적용
+plt.rcParams["font.family"] = 'NanumGothic'
+
+plt.subplot(121)
+plt.title('GDP GROWTH & UNEMPLOYMENT RATE (US)', fontsize=20) 
+plt.rcParams["figure.figsize"] = (16,8)
 plt.ylabel('GROWTH RATE', fontsize=14)
 plt.xlabel('Date', fontsize=14)
 plt.plot(gdp_df.index, gdp_df.GDP, color='black', linewidth = 3)
+plt.plot(unemploy_df.index, unemploy_df.Unemployment_Rate, color='y', linewidth = 3)
+plt.ylabel('figure', fontsize=12)
+plt.xlabel('Date', fontsize=12)
+plt.legend(['GDP', 'UNEMPLOY'], fontsize=12, loc='best')
+
+economic_df = pd.concat([gdp_df, unemploy_df], axis = 1)
+
+economic_df.columns = ['GDP', 'UNEMPLOYMENT']
+economic_df = economic_df.dropna()
+print(economic_df)
+
+gdp_growth_df = pd.DataFrame(data=economic_df.GDP)
+scaler.fit(gdp_growth_df)
+gdp_growth_scaled = scaler.transform(gdp_growth_df)
+gdp_growth_df_scaled = pd.DataFrame(data=gdp_growth_scaled)
+
+unemploy_rate_df = pd.DataFrame(data=economic_df.UNEMPLOYMENT)
+scaler.fit(unemploy_rate_df)
+unemploy_rate_scaled = scaler.transform(unemploy_rate_df)
+unemploy_rate_df_scaled = pd.DataFrame(data=unemploy_rate_scaled)
+
+economic_scaled_df = pd.concat([gdp_growth_df_scaled, unemploy_rate_df_scaled], axis = 1)
+economic_cor = economic_df.corr()
+
+
+plt.subplot(122)
+plt.plot(gdp_growth_df.index, gdp_growth_df_scaled, color='black') # 표준화 된 지표 그래프
+plt.plot(unemploy_rate_df.index, unemploy_rate_df_scaled, color='y')
+
+plt.title("GDP_UNEMPLOY_SCALED (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) 
+plt.ylabel('figure', fontsize=12)
+plt.xlabel('Date', fontsize=12)
+plt.legend(['GDP', 'UNEMPLOY'], fontsize=12, loc='best')
+
+
+### 상관관계 짧게 분석 (상관계수, p-value)
+X = gdp_df.GDP.values 
+Y = unemploy_df.Unemployment_Rate.values 
+print(stats.pearsonr(X,Y))
+print(stats.kendalltau(X,Y))
+print(stats.spearmanr(X,Y))
+
+
+
+
+
+
+sns.set(style="white")
+f, ax = plt.subplots(figsize=(5, 5)) # 표준화 된 지표 상관분석 표
+cmap = sns.diverging_palette(200, 10, as_cmap=True)
+sns.heatmap(economic_cor, cmap = cmap, center=0.0, square=True,
+            linewidths=0.5, cbar_kws={"shrink": 0.75}, annot=True)
+
+plt.title("GDP_UNEMPLOY_CORR", size=15)
+ax.set_xticklabels(list(economic_cor.columns), size=10, rotation=90)
+ax.set_yticklabels(list(economic_cor.columns), size=10, rotation=0)
 plt.show()
 
-
 ### 원본 그래프
-plt.rcParams["figure.figsize"] = (16,8)
 # Line Graph by matplotlib with wide-form DataFrame
 plt.subplot(121)
 plt.plot(stock_df.index, stock_df.Close, color='r') # 원본 지표
@@ -217,15 +294,13 @@ plt.plot(fund_df.index, fund_df.Funds_Rate, color='b')
 plt.plot(house_df.index, house_df.House_Price, color='g')
 plt.plot(bond_df.index, bond_df.Bond_Close, color='m')
 
-plt.title('ORIGINAL (' + start[2:4] + "." + start[6]+ "~" + end[2:4] + "." + end[6] + ")", fontsize=20) 
+plt.title('ORIGINAL (' + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) 
 plt.ylabel('figure', fontsize=12)
 plt.xlabel('Date', fontsize=12)
 plt.legend(['Nasdaq', 'Gold', 'Fund', 'House', 'bond'], fontsize=12, loc='best')
 # plt.show()
 
 ### 표준화(0~1) 된 지표의 그래프 및 상관관계 분석
-scaler = MinMaxScaler()
-
 stock_close_df = pd.DataFrame(data=stock_df.Close)
 scaler.fit(stock_close_df)
 stock_scaled = scaler.transform(stock_close_df)
@@ -269,12 +344,6 @@ snp_df_scaled = pd.DataFrame(data=snp_scaled)
 
 ### 표준화 된 주식 그래프 그리기
 
-# 유니코드 깨짐현상 해결
-plt.rcParams['axes.unicode_minus'] = False
- 
-# 나눔고딕 폰트 적용
-plt.rcParams["font.family"] = 'NanumGothic'
-
 plt.subplot(122)
 plt.plot(stock_df.index, stock_df_scaled, color='r') # 표준화 된 지표 그래프
 plt.plot(gold_df.index, gold_df_scaled, color='y')
@@ -282,7 +351,7 @@ plt.plot(fund_df.index, fund_df_scaled, color='b')
 plt.plot(house_df.index, house_df_scaled, color='g')
 plt.plot(bond_df.index, bond_df_scaled, color='m')
 
-plt.title("ORIGINAL_SCALED (" + start[2:4] + "." + start[6]+ "~" + end[2:4] + "." + end[6] + ")", fontsize=20) 
+plt.title("ORIGINAL_SCALED (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) 
 plt.ylabel('figure', fontsize=12)
 plt.xlabel('Date', fontsize=12)
 plt.legend(['Nasdaq', 'Gold', 'Fund', 'House', 'bond'], fontsize=12, loc='best')
@@ -300,7 +369,7 @@ cmap = sns.diverging_palette(200, 10, as_cmap=True)
 sns.heatmap(cor, cmap = cmap, center=0.0, square=True,
             linewidths=0.5, cbar_kws={"shrink": 0.75}, annot=True)
 
-plt.title("ORIGINAL_CORR (" + start[2:4] + "." + start[6]+ "~" + end[2:4] + "." + end[6] + ")", size=15)
+plt.title("ORIGINAL_CORR (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", size=15)
 ax.set_xticklabels(list(corr_df.columns), size=10, rotation=90)
 ax.set_yticklabels(list(corr_df.columns), size=10, rotation=0)
 plt.show()
@@ -401,7 +470,7 @@ if 'SnP' in types:
     plt.plot(snp_profit_df.index, snp_profit_scaled, color = 'cyan')
 
 
-plt.title("PROFIT_SCALED (" + start[2:4] + "." + start[6]+ "~" + end[2:4] + "." + end[6] + ")", fontsize=20) # 정규화 된 수익률 그래프
+plt.title("PROFIT_SCALED (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) # 정규화 된 수익률 그래프
 plt.ylabel('figure', fontsize=12)
 plt.xlabel('Date', fontsize=12)
 plt.legend(types, fontsize=12, loc='best')
@@ -414,7 +483,7 @@ f, ax = plt.subplots(figsize=(5, 5))
 cmap = sns.diverging_palette(200, 10, as_cmap=True)
 sns.heatmap(asset_rate_corr_df, cmap = cmap, square = True, annot = True, fmt = '.2f', 
             linewidths = .5, cbar_kws={"shrink": .5})
-plt.title("PROFIT_CORR (" + start[2:4] + "." + start[6]+ "~" + end[2:4] + "." + end[6] + ")", fontsize = 15)
+plt.title("PROFIT_CORR (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize = 15)
 plt.show()
 
 # asset_rate_scaled_df = pd.concat([stock_profit_scaled, gold_profit_scaled, fund_profit_scaled, house_profit_scaled, bond_profit_scaled, snp_profit_scaled], axis = 1)
