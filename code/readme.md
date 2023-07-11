@@ -55,6 +55,7 @@ df.drop_duplicates(['컬럼'], keep = 'first')
 ```
 - 이상치는 데이터를 확보할 때 발생하는 오류이외에 특이치만 발생할 것으로 예상된다.
 - 특이치는 분석에 필요한 데이터므로 변경할 필요가 없다
+- 실제로 나스닥 이상치를 정규분포로 구해본 결과 2020년 내 몇개의 데이터가 추출되었다.(COVID-19로 인한 특이치)
 ---
 ## 분석그래프(원본, min-max정규화, 상관분석)
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/40f62e69-5ab0-4c56-a9cc-debbea264041)
