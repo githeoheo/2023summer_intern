@@ -1,6 +1,6 @@
 ## CODE
 ---
-> ### 데이터 수집
+> ### ***데이터 수집***
 - csv 파일 불러오기
 ```python
 stock_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/나스닥(1985~2023)_yfinance.csv')
@@ -33,7 +33,7 @@ stock_df.loc[:,'Date'] = pd.to_datetime(stock_df.Date)
 stock_df = stock_df.set_index('Date')
 ```
 
-> ### 데이터 전처리(결측치/중복치)
+> ### ***데이터 전처리(결측치/중복치)***
 - 필요없는 행열 삭제하기(axis = 0 : 행 / axis = 1 : 열 / 생략 시 0 디폴트)
 ```python
 stock_df = stock_df.drop(['Open', 'High', 'Low', 'Adj Close', 'Volume'], axis = 1) 
