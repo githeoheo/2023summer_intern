@@ -63,12 +63,15 @@ df.drop_duplicates(['컬럼'], keep = 'first')
     stats.spearmanr(X,Y) -> SignificanceResult(statistic=-0.009833604183356904, pvalue=0.7878977953390143)
 ```
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/365fdcd6-6bea-497c-bc4d-ddba1c8d112a)
-- 2019.11 ~ 2020.12 까지의 5가지 자산 지표 그래프(원본&정규화)   
+- 2019.11 ~ 2020.12 까지의 5가지 자산 지표 그래프(원본&정규화)
+- 
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/21ad809f-e4a3-4366-a991-17576f541867)
-- 상관관계 분석 결과 해당 기간에 주식과 부동산은 양의 관계, 채권과 금리는 음의 관계가 두드러짐을 확인가능하다   
+- 상관관계 분석 결과 해당 기간에 주식과 부동산은 양의 관계, 채권과 금리는 음의 관계가 두드러짐을 확인가능하다
+- 
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/5e0351c0-8c70-4ea8-8971-a879a3cb3cd7)
 - 기간 내 5가지 지표 그래프의 더 알아보기 위해 수익률을 구해 정규화하여 그래프를 그려보았다
-- 상관분석이 제대로 이루어지는지 확인을 위해 SnP500지수(나스닥과 흐름이 거의 같은 지수)를 추가하였다   
+- 상관분석이 제대로 이루어지는지 확인을 위해 SnP500지수(나스닥과 흐름이 거의 같은 지수)를 추가하였다
+- 
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/2e6e2df4-c916-4e5b-9a8a-dac30751c7a2)
 - 상관관계 분석 결과 나스닥과 SnP 가 양의 관계인 것으로 보아 분석은 잘되는 것으로 확인된다
 - 하지만 5가지 지표의 관계를 알아내기에 좋은 방법으로 느껴지지 않는다
