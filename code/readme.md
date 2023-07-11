@@ -58,7 +58,10 @@ df.drop_duplicates(['컬럼'], keep = 'first')
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/40f62e69-5ab0-4c56-a9cc-debbea264041)
 - 미국의 경제사이클 분석을 위한 지표로 GDP와 실업률을 선택했다.
 - 상관관계 분석기법(pearsonr, kendalltau, spearmanr) 사용 시 GDP, 실업률은 관계가 없음을 알아냈다.
-```
+```python
+    stats.pearsonr(X,Y)
+    stats.kendalltau(X,Y)
+    stats.spearmanr(X,Y)
     PearsonRResult(statistic=-0.06032551323899124, pvalue=0.09854796999125372)
     SignificanceResult(statistic=-0.009059600526627815, pvalue=0.7129098440414525)
     SignificanceResult(statistic=-0.009833604183356904, pvalue=0.7878977953390143)
