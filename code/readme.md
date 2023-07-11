@@ -53,6 +53,8 @@ print(fund_df[fund_df.duplicated()])
 ```python
 df.drop_duplicates(['컬럼'], keep = 'first')
 ```
+- 이상치는 데이터를 확보할 때 발생하는 오류이외에 특이치만 발생할 것으로 예상된다.
+- 특이치는 분석에 필요한 데이터므로 변경할 필요가 없다
 ---
 ## 분석그래프(원본, min-max정규화, 상관분석)
 ![image](https://github.com/githeoheo/2023summer_intern/assets/113009722/40f62e69-5ab0-4c56-a9cc-debbea264041)
