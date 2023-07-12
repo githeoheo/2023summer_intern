@@ -84,83 +84,11 @@ interest_df = interest_df.dropna(axis=0)
 house_df = house_df.dropna(axis=0)
 bond_df = bond_df.dropna(axis=0)
 gdp_df = gdp_df.dropna(axis=1)
-# df = df[['컬럼1', '컬럼2']].dropna()
-
-### 결측치 채우기
-# df.loc[191, '수출금액'] = (df.loc[188, '수출금액'] + df.loc[194, '수출금액']) / 2 
-# df.loc[191, '무역수지'] = df.loc[188, '수출금액'] - df.loc[194, '수입금액']
-# df = df.fillna(0) # 결측치 0으로 채우기
-# df.fillna(method='ffill') # 결측치 위에서 아래 방향으로 채우기
-# df.fillna(method='bfill') # 결측치 아래에서 위 방향으로 채우기
-# df.fillna(method='ffill', limit=1) # 결측치 위에서 아래 방향으로 1번 채우기
-# df.fillna(df.mean()['C1':'C2']) # 컬럼의 평균으로 C1, C2 컬럼 채우기
-# df = df.interpolate(method = value) # 선형보간법으로 채우기(method = value : 선형 / method = time : 시간)
-# df.replace({'col1': old_val}, {'col1': new_val}) # 특정 컬럼 값 replace로 변경하기
-
 
 # --------------- 중복치 ---------------- #
-
-### 중복데이터 확인하기
-# print(interest_df[interest_df.duplicated()])
-# print(stock_df[stock_df.duplicated()])
-# print(house_df[house_df.duplicated()])
-# print(bond_df[bond_df.duplicated()])
-# print(gold_df[gold_df.duplicated()])
-
-### 중복데이터 삭제하기
-# df.drop_duplicates(['컬럼'], keep = 'first')
-# print("삭제 완료")
-# print(df[df.duplicated()])
-# df.drop_duplicates(subset=['id'], keep='last') # 특정 열이 고유한 key를 가지는 경우 중복된 데이터 중 뒤를 남김
-
-
-
-
-
+#--practice.py 참고--#
 # --------------- 이상치 ---------------- #
-# # fig, ax = plt.subplots(figsize=(9,6)) # 정규분포를 따르는지 그래프로 확인
-# # _ = plt.hist(df.Close, 100, density=True, alpha=0.75)
-# # plt.show()
-
-# # _, p = ztest(df.Close) # p가 0.05이하로 나온다면 정규분포와 거리가 멀다는 뜻
-# # print(p)
-
-# # 위 주식 데이터의 분포 확인
-# # fig, ax = plt.subplots(figsize=(9,6))
-# # _ = plt.hist(stock_df.Close, 100, density=True, alpha=0.75)
-# # plt.show()
-
-# _, p = ztest(stock_df.Close)
-# print(p)
-
-# # 계절적 성분 50일로 가정
-# # extrapolate_trend='freq' : Trend 성분을 만들기 위한 rolling window 때문에 필연적으로 trend, resid에는 Nan 값이 발생하기 때문에, 이 NaN값을 채워주는 옵션이다.
-# result = seasonal_decompose(stock_df.Close, model='additive', two_sided=True, 
-#                             period=50, extrapolate_trend='freq') 
-# result.plot()
-# plt.show()
-# result.seasonal[:100].plot()
-# plt.show()
-
-# # Residual의 분포 확인
-# fig, ax = plt.subplots(figsize=(9,6))
-# _ = plt.hist(result.resid, 100, density=True, alpha=0.75)
-# plt.show()
-
-# r = result.resid.values
-# st, p = ztest(r)
-# print(st,p)
-
-# # 평균과 표준편차 출력
-# mu, std = result.resid.mean(), result.resid.std()
-# print("평균:", mu, "표준편차:", std)
-# # 평균: -0.3595321143716522 표준편차: 39.8661527194307
-
-# # n-sigma(표준편차)를 기준으로 이상치 판단
-# print("이상치 갯수:", len(result.resid[(result.resid>mu+3*std)|(result.resid<mu-3*std)]))
-# print(result.resid[(result.resid>mu+3*std)|(result.resid<mu-3*std)])
-# # print(stock_df.Date[result.resid[(result.resid>mu+4*std)|(result.resid<mu-4*std)]].index)
-
+#--practice.py 참고--#
 
 #######---------------------------------------- 그래프그리기 ----------------------------------------------------######
 # 전역으로 그래프 사이즈 고정
