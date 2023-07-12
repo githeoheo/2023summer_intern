@@ -80,10 +80,12 @@ gdp_df = gdp_df.interpolate(method = "time")
 
 # 결측치가 있는 행 or 열 제거하는 함수 (axis = 0 : 행 / axis = 1 : 열 / 생략 시 0 디폴트)
 stock_df = stock_df.dropna(axis=0)
+gold_df = gold_df.dropna(axis=0)
 interest_df = interest_df.dropna(axis=0)
 house_df = house_df.dropna(axis=0)
 bond_df = bond_df.dropna(axis=0)
-gdp_df = gdp_df.dropna(axis=1)
+gdp_df = gdp_df.dropna(axis=1)  # 열 이름 없는데도 값이 비어있는 열들이 있어서 추가 삭제
+gdp_df = gdp_df.dropna(axis=0)
 
 # --------------- 중복치 ---------------- #
 #--practice.py 참고--#
