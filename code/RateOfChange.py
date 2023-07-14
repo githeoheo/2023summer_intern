@@ -89,7 +89,7 @@ bond_df = bond_df.drop(['시가', '고가', '저가', '변동 %'], axis = 1)
 # bond_df = bond_df.drop([0], axis=0)
 # # print(bond_df.head)
 
-### 모든 데이터를 지수의 차이로 변환하고 필요없는 열 삭제
+### 5가지 데이터의 첫 시작 지수를 100으로 통일 -> 모든 데이터를 지수의 차이로 변환하고 필요없는 열 삭제
 # 금리(지수->지수)
 interest_df = interest_df.reset_index(drop=True)
 interest_df['Interest_Rate'] = 0
