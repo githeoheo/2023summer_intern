@@ -1,0 +1,6 @@
+alpha-vantage
+flask
+flask-restful
+matplotlib
+numpy
+torch
