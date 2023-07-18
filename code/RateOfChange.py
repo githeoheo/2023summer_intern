@@ -43,59 +43,13 @@ bond_df = bond_df[bond_df['Date'].between(start,end)]
 stock_df = stock_df.drop(['Open', 'High', 'Low', 'Adj Close', 'Volume'], axis = 1)
 bond_df = bond_df.drop(['시가', '고가', '저가', '변동 %'], axis = 1)
 
-# ### 모든 데이터를 변화율로 변환하고 필요없는 열 삭제
-# # 금리
-# interest_df = interest_df.reset_index(drop=True)
-# interest_df['Interest_Rate'] = 0
-# for i in range (len(interest_df)-1):
-#     interest_df.loc[i+1, 'Interest_Rate'] = ((interest_df.loc[i+1, 'Funds_Rate'] / interest_df.loc[i, 'Funds_Rate']) - 1) * 100
-# interest_df = interest_df.drop(['Funds_Rate'], axis=1)
-# interest_df = interest_df.drop([0], axis=0)
-# # print(interest_df.head)
-
-# # 주가(지수->지수)
-# stock_df = stock_df.reset_index(drop=True)
-# stock_df['Stock_Rate'] = 0
-# for i in range (len(stock_df)-1):
-#     stock_df.loc[i+1, 'Stock_Rate'] = ((stock_df.loc[i+1, 'Close'] / stock_df.loc[i, 'Close']) - 1) * 100
-# stock_df = stock_df.drop(['Close'], axis=1)
-# stock_df = stock_df.drop([0], axis=0)
-# # print(stock_df.head)
-
-# # 금(가격->변화율)
-# gold_df = gold_df.reset_index(drop=True)
-# gold_df['Gold_Rate'] = 0
-# for i in range (len(gold_df)-1):
-#     gold_df.loc[i+1, 'Gold_Rate'] = ((gold_df.loc[i+1, 'Gold_Price'] / gold_df.loc[i, 'Gold_Price']) - 1) * 100
-# gold_df = gold_df.drop(['Gold_Price'], axis=1)
-# gold_df = gold_df.drop([0], axis=0)
-# # print(gold_df.head)
-
-# # 부동산(지수->지수)
-# house_df = house_df.reset_index(drop=True)
-# house_df['House_Rate'] = 0
-# for i in range (len(house_df)-1):
-#     house_df.loc[i+1, 'House_Rate'] = ((house_df.loc[i+1, 'House_Price'] / house_df.loc[i, 'House_Price']) - 1) * 100
-# house_df = house_df.drop(['House_Price'], axis=1)
-# house_df = house_df.drop([0], axis=0)
-# # print(house_df.head)
-
-# # 채권
-# bond_df = bond_df.reset_index(drop=True)
-# bond_df['Bond_Rate'] = 0
-# for i in range (len(bond_df)-1):
-#     bond_df.loc[i+1, 'Bond_Rate'] = ((bond_df.loc[i+1, 'Bond_Close'] / bond_df.loc[i, 'Bond_Close']) - 1) * 100
-# bond_df = bond_df.drop(['Bond_Close'], axis=1)
-# bond_df = bond_df.drop([0], axis=0)
-# # print(bond_df.head)
-
-### 5가지 데이터의 첫 시작 지수를 100으로 통일 -> 모든 데이터를 지수의 차이로 변환하고 필요없는 열 삭제
+### 모든 데이터를 변화율로 변환하고 필요없는 열 삭제
 # 금리(지수->지수)
 interest_df = interest_df.reset_index(drop=True)
 interest_df['Interest_Rate'] = 0
 interest_df['Funds_Rate'] = interest_df['Funds_Rate'] / interest_df.loc[0, 'Funds_Rate'] * 100
 for i in range (len(interest_df)-1):
-    interest_df.loc[i+1, 'Interest_Rate'] = interest_df.loc[i+1, 'Funds_Rate'] - interest_df.loc[i, 'Funds_Rate']
+    interest_df.loc[i+1, 'Interest_Rate'] = ((interest_df.loc[i+1, 'Funds_Rate'] / interest_df.loc[i, 'Funds_Rate']) - 1) * 100
 interest_df = interest_df.drop(['Funds_Rate'], axis=1)
 interest_df = interest_df.drop([0], axis=0)
 # print(interest_df.head)
@@ -105,19 +59,19 @@ stock_df = stock_df.reset_index(drop=True)
 stock_df['Stock_Rate'] = 0
 stock_df['Close'] = stock_df['Close'] / stock_df.loc[0, 'Close'] * 100
 for i in range (len(stock_df)-1):
-    stock_df.loc[i+1, 'Stock_Rate'] = stock_df.loc[i+1, 'Close'] - stock_df.loc[i, 'Close']
+    stock_df.loc[i+1, 'Stock_Rate'] = ((stock_df.loc[i+1, 'Close'] / stock_df.loc[i, 'Close']) - 1) * 100
 stock_df = stock_df.drop(['Close'], axis=1)
 stock_df = stock_df.drop([0], axis=0)
 # print(stock_df.head)
 
-# 금(가격->지수)
+# 금(가격->변화율)
 gold_df = gold_df.reset_index(drop=True)
 gold_df['Gold_Rate'] = 0
 for i in range (len(gold_df)-1):
     gold_df.loc[i+1, 'Gold_Price'] = (gold_df.loc[i+1, 'Gold_Price'] / gold_df.loc[0, 'Gold_Price']) * 100 # 지수 계산하기
 gold_df.loc[0, 'Gold_Price'] = 100
 for i in range (len(gold_df)-1):
-    gold_df.loc[i+1, 'Gold_Rate'] = gold_df.loc[i+1, 'Gold_Price'] - gold_df.loc[i, 'Gold_Price'] # 전월 대비 현월 지수의 차이 계산하기
+    gold_df.loc[i+1, 'Gold_Rate'] = ((gold_df.loc[i+1, 'Gold_Price'] / gold_df.loc[i, 'Gold_Price']) - 1) * 100
 gold_df = gold_df.drop(['Gold_Price'], axis=1)
 gold_df = gold_df.drop([0], axis=0)
 # print(gold_df.head)
@@ -125,24 +79,25 @@ gold_df = gold_df.drop([0], axis=0)
 # 부동산(지수->지수)
 house_df = house_df.reset_index(drop=True)
 house_df['House_Rate'] = 0
-house_df['House_Price'] = house_df['House_Price'] / house_df.loc[0, 'House_Price'] * 100
+house_df['House_Price'] = house_df['House_Price'] / house_df.loc[0, 'House_Price'] * 100    
 for i in range (len(house_df)-1):
-    house_df.loc[i+1, 'House_Rate'] = house_df.loc[i+1, 'House_Price'] - house_df.loc[i, 'House_Price']
+    house_df.loc[i+1, 'House_Rate'] = ((house_df.loc[i+1, 'House_Price'] / house_df.loc[i, 'House_Price']) - 1) * 100
 house_df = house_df.drop(['House_Price'], axis=1)
 house_df = house_df.drop([0], axis=0)
 # print(house_df.head)
 
-# 채권(가격->지수)
+# 채권(지수->지수)
 bond_df = bond_df.reset_index(drop=True)
 bond_df['Bond_Rate'] = 0
 for i in range (len(bond_df)-1):
     bond_df.loc[i+1, 'Bond_Close'] = (bond_df.loc[i+1, 'Bond_Close'] / bond_df.loc[0, 'Bond_Close']) * 100
 bond_df.loc[0, 'Bond_Close'] = 100
 for i in range (len(bond_df)-1):
-    bond_df.loc[i+1, 'Bond_Rate'] = bond_df.loc[i+1, 'Bond_Close'] - bond_df.loc[i, 'Bond_Close']
+    bond_df.loc[i+1, 'Bond_Rate'] = ((bond_df.loc[i+1, 'Bond_Close'] / bond_df.loc[i, 'Bond_Close']) - 1) * 100
 bond_df = bond_df.drop(['Bond_Close'], axis=1)
 bond_df = bond_df.drop([0], axis=0)
 # print(bond_df.head)
+
 
 # 날짜 datatime 형식으로 전환하기
 stock_df.loc[:,'Date'] = pd.to_datetime(stock_df.Date)
@@ -213,4 +168,3 @@ ax.set_yticklabels(list(economic_cor.columns), size=10, rotation=0)
 
 # 그래프, heatmap 동시 출력
 plt.show()
-
