@@ -16,11 +16,11 @@ from sklearn.preprocessing import MinMaxScaler
 matplotlib.matplotlib_fname()
 
 ### CSV 파일 불러오기
-stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
-gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/금(1950~2023)_캐글.csv')
-fund_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/미국 금리(1954~2017)_캐글2.csv')
-house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
-bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/2년만기 미국채 선물 과거 데이터.csv')
+stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
+gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/금(1950~2023)_캐글.csv')
+fund_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/미국 금리(1954~2017)_캐글2.csv')
+house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
+bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/2년만기 미국채 선물 과거 데이터.csv')
 
 ### 불러올 날짜 설정
 # stock_df = stock_df[stock_df['Date'].between('1991-01-01', '2022-12-01')] 

@@ -15,14 +15,14 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 import scipy.stats as stats
 
 ### CSV 파일 불러오기
-stock_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/나스닥(1985~2023)_yfinance.csv')
-gold_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/금(1950~2023)_캐글.csv')
-fund_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/미국금리(1954.7~2023.5)_구글서치.csv')
-house_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
-bond_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/10년만기 미국채 선물 과거 데이터.csv')
-gdp_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/세계GDP성장률_캐글(1961~2020)_month.csv')
-snp_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/S&P 500 과거 데이터 Feb 1970 ~.csv')
-unemploy_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/데이터자료/US_Unemployment(1950~2023.07)_kag.csv')
+stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
+gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/금(1950~2023)_캐글.csv')
+fund_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/미국금리(1954.7~2023.5)_구글서치.csv')
+house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
+bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/10년만기 미국채 선물 과거 데이터.csv')
+gdp_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/세계GDP성장률_캐글(1961~2020)_month.csv')
+snp_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/S&P 500 과거 데이터 Feb 1970 ~.csv')
+unemploy_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/US_Unemployment(1950~2023.07)_kag.csv')
 
 ### 불러온 데이터 확인하기
 # print(stock_df.head)

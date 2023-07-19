@@ -21,11 +21,11 @@ from operator import itemgetter
 from matplotlib.patches import Rectangle
 
 ### CSV 파일 불러오기
-stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
-gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/금(1950~2023)_캐글.csv')
-fund_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/미국 금리(1954~2017)_캐글2.csv')
-house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
-bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/2년만기 미국채 선물 과거 데이터.csv')
+stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
+gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/금(1950~2023)_캐글.csv')
+fund_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/미국 금리(1954~2017)_캐글2.csv')
+house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
+bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/2년만기 미국채 선물 과거 데이터.csv')
 
 ### 불러온 데이터 날 것으로 확인하기
 print(stock_df.head) # 총 행렬 가져오기
