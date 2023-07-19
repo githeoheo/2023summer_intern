@@ -172,4 +172,3 @@ plt.title("GDP & 5-asset (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + ".
 
 # 그래프, heatmap 동시 출력
 plt.show()
-

@@ -1,4 +1,5 @@
 
+
 # 컬럼 rename 바꾸고 날짜 설정을 87년 ~ 23년도로 설정해준다. 
 # 날짜 형태 전환해주고 set_index()로 index를 날짜로 변경한다.
 # 데이터들은 결측치 제거를 drop()와 dropna()를 사용하고 gdp는 선형보간법 interpolate로 결측치를 채웠다.
@@ -29,12 +30,12 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 import scipy.stats as stats
 
 # CSV 파일 불러오기
-stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
-gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/금(1950~2023)_캐글.csv')
-interest_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/미국금리(1954.7~2023.5)_구글서치.csv')
-house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
-bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/10년만기 미국채 선물 과거 데이터.csv')
-gdp_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis/dataset/original_data/1인당GDP.csv')
+stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
+gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/금(1950~2023)_캐글.csv')
+interest_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/미국금리(1954.7~2023.5)_구글서치.csv')
+house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
+bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/10년만기 미국채 선물 과거 데이터.csv')
+gdp_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/1인당GDP.csv')
 
 # 데이터프레임 컬럼 이름 바꾸기
 gold_df = gold_df.rename(columns={'Price USD per Oz':'Gold_Price'})
@@ -236,4 +237,3 @@ economic_cor = economic_df.corr()
 
 # 그래프, heatmap 동시 출력
 plt.show()
-
