@@ -1,3 +1,5 @@
+## 5가지 자산데이터(주식, 금, 부동산, 금리, 채권) 비율로 그래프 나오고 이들의 상관관계 나옴
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.pylab import rcParams
@@ -15,12 +17,12 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 import scipy.stats as stats
 
 # CSV 파일 불러오기
-stock_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/나스닥(1985~2023)_yfinance.csv')
-gold_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/금(1950~2023)_캐글.csv')
-interest_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/미국금리(1954.7~2023.5)_구글서치.csv')
-house_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
-bond_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/10년만기 미국채 선물 과거 데이터.csv')
-gdp_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/1인당GDP.csv')
+stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
+gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/금(1950~2023)_캐글.csv')
+interest_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/미국금리(1954.7~2023.5)_구글서치.csv')
+house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
+bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/10년만기 미국채 선물 과거 데이터.csv')
+gdp_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/1인당GDP.csv')
 
 #######--------------------------------------- 데이터 전처리 -------------------------------------------#######
 
@@ -86,11 +88,11 @@ house_df = house_df.drop(['House_Price'], axis=1)
 house_df = house_df.drop([0], axis=0)
 # print(house_df.head)
 
-# 채권(지수->지수)
+# 채권(가격->변화율)
 bond_df = bond_df.reset_index(drop=True)
 bond_df['Bond_Rate'] = 0
 for i in range (len(bond_df)-1):
-    bond_df.loc[i+1, 'Bond_Close'] = (bond_df.loc[i+1, 'Bond_Close'] / bond_df.loc[0, 'Bond_Close']) * 100
+    bond_df.loc[i+1, 'Bond_Close'] = (bond_df.loc[i+1, 'Bond_Close'] / bond_df.loc[0, 'Bond_Close']) * 100  # 지수 계산하기
 bond_df.loc[0, 'Bond_Close'] = 100
 for i in range (len(bond_df)-1):
     bond_df.loc[i+1, 'Bond_Rate'] = ((bond_df.loc[i+1, 'Bond_Close'] / bond_df.loc[i, 'Bond_Close']) - 1) * 100
@@ -127,17 +129,17 @@ plt.rcParams["figure.figsize"] = (16,8)
 plt.rcParams['axes.unicode_minus'] = False
  
 # 나눔고딕 폰트 적용
-plt.rcParams["font.family"] = 'NanumGothic'
+plt.rcParams["font.family"] = 'Malgun Gothic'
 
 # 그래프 타이틀
 plt.title('5-asset (' + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) 
 
 # 데이터 주입
-plt.plot(stock_df.index, stock_df.Stock_Rate, color='r', linewidth = 3)
-plt.plot(gold_df.index, gold_df.Gold_Rate, color='y', linewidth = 3)
-plt.plot(house_df.index, house_df.House_Rate, color='b', linewidth = 3)
-plt.plot(interest_df.index, interest_df.Interest_Rate, color='g', linewidth = 3)
-plt.plot(bond_df.index, bond_df.Bond_Rate, color='m', linewidth = 3)
+plt.plot(stock_df.index, stock_df.Stock_Rate, color='r', linewidth = 2)
+plt.plot(gold_df.index, gold_df.Gold_Rate, color='y', linewidth = 2)
+plt.plot(house_df.index, house_df.House_Rate, color='b', linewidth = 2)
+plt.plot(interest_df.index, interest_df.Interest_Rate, color='g', linewidth = 2)
+plt.plot(bond_df.index, bond_df.Bond_Rate, color='m', linewidth = 2)
 
 # x축, y축, 각 데이터의 이름 설정
 plt.ylabel('$', fontsize=12)
@@ -145,26 +147,31 @@ plt.xlabel('Date', fontsize=12)
 plt.legend(['주가', '금', '부동산', '금리', '채권'], fontsize=12, loc='best')
 plt.show()
 
-# 상관분석을 한번에 하기 위해 5가지 지표 합치기
-economic_df = pd.concat([stock_df, gold_df, house_df, interest_df, bond_df], axis = 1)
+def Corr():
+    # 상관분석을 한번에 하기 위해 5가지 지표 합치기
+    economic_df = pd.concat([stock_df, gold_df, house_df, interest_df, bond_df], axis = 1)
 
-# 합친 데이터프레임의 열 이름 변환
-economic_df.columns = ['주가', '금', '부동산', '금리', '채권']
+    # 합친 데이터프레임의 열 이름 변환
+    economic_df.columns = ['주가', '금', '부동산', '금리', '채권']
 
-# 상관관계 분석 함수 사용
-economic_cor = economic_df.corr()
+    # 상관관계 분석 함수 사용
+    economic_cor = economic_df.corr()
 
-# heatmap 설정 후 그리기
-sns.set(style="white", font="Malgun Gothic", rc={"axes.unicode_minus":False})
-f, ax = plt.subplots(figsize=(5, 5)) # 표준화 된 지표 상관분석 표
-cmap = sns.diverging_palette(200, 10, as_cmap=True)
-sns.heatmap(economic_cor, cmap = cmap, center=0.0, square=True,
-            linewidths=0.5, cbar_kws={"shrink": 0.75}, annot=True)
+    # heatmap 설정 후 그리기
+    sns.set(style="white", font="Malgun Gothic", rc={"axes.unicode_minus":False})
+    f, ax = plt.subplots(figsize=(5, 5)) # 표준화 된 지표 상관분석 표
+    cmap = sns.diverging_palette(200, 10, as_cmap=True)
+    sns.heatmap(economic_cor, cmap = cmap, center=0.0, square=True,
+                linewidths=0.5, cbar_kws={"shrink": 0.75}, annot=True)
 
-# heatmap 타이틀과 x축, y축 이름 설정
-plt.title("5-asset (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", size=15)
-ax.set_xticklabels(list(economic_cor.columns), size=10, rotation=90)
-ax.set_yticklabels(list(economic_cor.columns), size=10, rotation=0)
+    # heatmap 타이틀과 x축, y축 이름 설정
+    plt.title("5-asset (" + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", size=15)
+    ax.set_xticklabels(list(economic_cor.columns), size=10, rotation=90)
+    ax.set_yticklabels(list(economic_cor.columns), size=10, rotation=0)
 
-# 그래프, heatmap 동시 출력
+# Corr()
+
+
+
+# 그래프, heatmap 출력
 plt.show()

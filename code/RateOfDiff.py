@@ -1,3 +1,8 @@
+## 5가지 자산데이터(주식, 금, 부동산, 금리, 채권) 비율 그래프나옴
+## 금리비율과 나머지 4개 자산데이터 평균으로 해서 비교하는 그래프나옴
+## 사이클(금리 - 4개 지표평균) 그래프 나옴
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.pylab import rcParams
@@ -18,11 +23,11 @@ def print_head(df):
     print(df.head)
 
 ### CSV 파일 불러오기
-stock_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/나스닥(1985~2023)_yfinance.csv')
-gold_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/금(1950~2023)_캐글.csv')
-interest_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/미국금리(1954.7~2023.5)_구글서치.csv')
-house_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
-bond_df = pd.read_csv('C:/Users/user/Desktop/학기별 문서/현장실습/real_price/10년만기 미국채 선물 과거 데이터.csv')
+stock_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
+gold_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/금(1950~2023)_캐글.csv')
+interest_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/미국금리(1954.7~2023.5)_구글서치.csv')
+house_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/케이스-쉴러_미국주택가격지수(1987.1~2023.4).csv')
+bond_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/10년만기 미국채 선물 과거 데이터.csv')
 
 #######--------------------------------------- 데이터 전처리 -------------------------------------------#######
 
@@ -47,8 +52,8 @@ bond_df = bond_df.drop(['시가', '고가', '저가', '변동 %'], axis = 1)
 
 
 ### 각 자산들을 지수화 하고 전월대비 현월 지수 차이 계산
-# 금리(지수->지수)
-interest_df = interest_df.reset_index(drop=True)
+# 금리(지수->지수)                                   # reset_index - 날짜 때문에 잘린 index를 0 부터 오름차순 재설정
+interest_df = interest_df.reset_index(drop=True)    # 날짜 자르면서 index도 같이 잘림 -> index를 0으로 초기화 시키기
 interest_df['Interest_Diff'] = 0
 interest_df['Interest_Rate'] = interest_df['Interest_Rate'] / interest_df.loc[0, 'Interest_Rate'] * 100
 for i in range (len(interest_df)-1):
@@ -162,7 +167,7 @@ def Setting():
     plt.rcParams['axes.unicode_minus'] = False
     
     # 나눔고딕 폰트 적용
-    plt.rcParams["font.family"] = 'NanumGothic'
+    plt.rcParams["font.family"] = 'Malgun Gothic'
 Setting()
 
 # 데이터 주입
@@ -171,12 +176,12 @@ def Graph():
     plt.title('5-asset (' + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) 
     
     plt.subplot(211)
-    plt.plot(stock_df.index, stock_df.Stock_Diff, color='r', linewidth = 3)
-    plt.plot(gold_df.index, gold_df.Gold_Diff, color='g', linewidth = 3)
-    plt.plot(house_df.index, house_df.House_Diff, color='b', linewidth = 3)
-    plt.plot(interest_df.index, interest_df.Interest_Diff, color='y', linewidth = 3)
-    plt.plot(bond_df.index, bond_df.Bond_Diff, color='m', linewidth = 3)
-    # plt.plot(average_df.index, average_df.Average_Diff, color = 'b', linewidth = 3)
+    plt.plot(stock_df.index, stock_df.Stock_Diff, color='r', linewidth = 1)
+    plt.plot(gold_df.index, gold_df.Gold_Diff, color='g', linewidth = 1)
+    plt.plot(house_df.index, house_df.House_Diff, color='b', linewidth = 1)
+    plt.plot(interest_df.index, interest_df.Interest_Diff, color='y', linewidth = 1)
+    plt.plot(bond_df.index, bond_df.Bond_Diff, color='m', linewidth = 1)
+    # plt.plot(average_df.index, average_df.Average_Diff, color = 'b', linewidth = 1)
 
     # x축, y축, 각 데이터의 이름 설정
     plt.ylabel('$', fontsize=12)
@@ -185,15 +190,15 @@ def Graph():
 
 
     plt.subplot(212)
-    plt.plot(interest_df.index, interest_df.Interest_Diff, color='y', linewidth = 3)
-    plt.plot(average_df.index, average_df.Average_Diff, color = 'b', linewidth = 3)
+    plt.plot(interest_df.index, interest_df.Interest_Diff, color='y', linewidth = 1)
+    plt.plot(average_df.index, average_df.Average_Diff, color = 'b', linewidth = 1)
     plt.ylabel('$', fontsize=12)
     plt.xlabel('Date', fontsize=12)
     plt.legend(['금리','평균'], fontsize=12, loc='best')
     plt.show()
 
 
-    plt.plot(cycle_df.index, cycle_df.Cycle_Curve, color='y', linewidth = 3)
+    plt.plot(cycle_df.index, cycle_df.Cycle_Curve, color='y', linewidth = 1)
     plt.hlines(0, cycle_df.index[0], cycle_df.index[len(cycle_df)-1], color='black', linewidth=3)
     plt.ylabel('$', fontsize=12)
     plt.xlabel('Date', fontsize=12)
@@ -206,12 +211,12 @@ def Graph_Abs():
     plt.title('5-asset (' + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) 
     
     plt.subplot(211)
-    plt.plot(stock_abs_df.index, stock_abs_df.Stock_Diff, color='r', linewidth = 3)
-    plt.plot(gold_abs_df.index, gold_abs_df.Gold_Diff, color='g', linewidth = 3)
-    plt.plot(house_abs_df.index, house_abs_df.House_Diff, color='b', linewidth = 3)
-    plt.plot(interest_abs_df.index, interest_abs_df.Interest_Diff, color='y', linewidth = 3)
-    plt.plot(bond_abs_df.index, bond_abs_df.Bond_Diff, color='m', linewidth = 3)
-    # plt.plot(average_abs_df.index, average_abs_df.Average_Diff, color = 'b', linewidth = 3)
+    plt.plot(stock_abs_df.index, stock_abs_df.Stock_Diff, color='r', linewidth = 1)
+    plt.plot(gold_abs_df.index, gold_abs_df.Gold_Diff, color='g', linewidth = 1)
+    plt.plot(house_abs_df.index, house_abs_df.House_Diff, color='b', linewidth = 1)
+    plt.plot(interest_abs_df.index, interest_abs_df.Interest_Diff, color='y', linewidth = 1)
+    plt.plot(bond_abs_df.index, bond_abs_df.Bond_Diff, color='m', linewidth =1)
+    # plt.plot(average_abs_df.index, average_abs_df.Average_Diff, color = 'b', linewidth = 1)
 
     # x축, y축, 각 데이터의 이름 설정
     plt.ylabel('$', fontsize=12)
@@ -220,15 +225,15 @@ def Graph_Abs():
 
 
     plt.subplot(212)
-    plt.plot(interest_abs_df.index, interest_abs_df.Interest_Diff, color='y', linewidth = 3)
-    plt.plot(average_abs_df.index, average_abs_df.Average_Diff, color = 'b', linewidth = 3)
+    plt.plot(interest_abs_df.index, interest_abs_df.Interest_Diff, color='y', linewidth = 1)
+    plt.plot(average_abs_df.index, average_abs_df.Average_Diff, color = 'b', linewidth = 1)
     plt.ylabel('$', fontsize=12)
     plt.xlabel('Date', fontsize=12)
     plt.legend(['금리','평균'], fontsize=12, loc='best')
     plt.show()
 
 
-    plt.plot(cycle_abs_df.index, cycle_abs_df.Cycle_Curve, color='y', linewidth = 3)
+    plt.plot(cycle_abs_df.index, cycle_abs_df.Cycle_Curve, color='y', linewidth = 1)
     plt.hlines(0, cycle_abs_df.index[0], cycle_abs_df.index[len(cycle_df)-1], color='black', linewidth=3)
     plt.ylabel('$', fontsize=12)
     plt.xlabel('Date', fontsize=12)
