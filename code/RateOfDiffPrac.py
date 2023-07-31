@@ -1,6 +1,7 @@
 ## 5가지 자산데이터(주식, 금, 부동산, 금리, 채권) 비율 그래프나옴
 ## 금리비율과 나머지 4개 자산데이터 평균으로 해서 비교하는 그래프나옴
 ## 사이클(금리 - 4개 지표평균) 그래프 나옴
+# 금리비율 - 자산데이터 비율 뺀거에 사이클 다양하게 시도해보기
 
 
 import pandas as pd
@@ -122,7 +123,7 @@ interest_df = interest_df.set_index('Date')
 house_df = house_df.set_index('Date')
 bond_df = bond_df.set_index('Date')
 
-# ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ정규화와 가중평균 구하기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 
+# ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ4가지 지표 가중평균 구하기, 4가지 정규화 지표 가중평균 구하기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 
 ### 4가지 지표 가중평균 구하기
 weight_stock = 0.25 # 가중치
 weight_gold = 0.25
@@ -132,10 +133,16 @@ weight_bond = 0.25
 average_df = pd.concat([stock_df, gold_df, house_df, bond_df], axis=1)  # 4가지 데이터프레임 합치기
 
 average_df['Average_Diff'] = average_df['Stock_Diff'] * weight_stock + average_df['Gold_Diff'] * weight_gold + average_df['House_Diff'] * weight_house + average_df['Bond_Diff'] * weight_bond  # 새로운 열 생성 후 가중평균 계산
+# average_df['Average_Diff'] = average_df['Stock_Diff'] + average_df['Gold_Diff'] + average_df['House_Diff'] + average_df['Bond_Diff']  # 새로운 열 생성 후 평균구하기
 
 average_df['Cycle_Curve'] = interest_df['Interest_Diff'] - average_df['Average_Diff'] # 새로운 열 생성 후 
 
 cycle_df = pd.DataFrame(average_df['Cycle_Curve'])
+
+
+
+
+
 
 
 # 4가지 지표 -1 ~ 1 사이 정규화(max abs)
@@ -145,11 +152,42 @@ interest_abs_df = interest_df / interest_df.abs().max()
 house_abs_df = house_df / house_df.abs().max()
 bond_abs_df = bond_df / bond_df.abs().max()
 
+# ### 정규화(-1 ~ 1)
+# scaler = MinMaxScaler(feature_range=(-1,1))
+
+# stock_Diff_df = pd.DataFrame(data=stock_df.Stock_Diff)
+# scaler.fit(stock_Diff_df)
+# stock_scaled = scaler.transform(stock_Diff_df)
+# stock_abs_df = pd.DataFrame(data=stock_scaled)
+
+# gold_Diff_df = pd.DataFrame(data=gold_df.Gold_Diff)
+# scaler.fit(gold_Diff_df)
+# gold_scaled = scaler.transform(gold_Diff_df)
+# gold_abs_df = pd.DataFrame(data=gold_scaled)
+
+# interest_Diff_df = pd.DataFrame(data=interest_df.Interest_Diff)
+# scaler.fit(interest_Diff_df)
+# interest_scaled = scaler.transform(interest_Diff_df)
+# interest_abs_df = pd.DataFrame(data=interest_scaled)
+
+# house_Diff_df = pd.DataFrame(data=house_df.House_Diff)
+# scaler.fit(house_Diff_df)
+# house_scaled = scaler.transform(house_Diff_df)
+# house_abs_df = pd.DataFrame(data=house_scaled)
+
+# bond_Diff_df = pd.DataFrame(data=bond_df.Bond_Diff)
+# scaler.fit(bond_Diff_df)
+# bond_scaled = scaler.transform(bond_Diff_df)
+# bond_abs_df = pd.DataFrame(data=bond_scaled)
+
+
 
 # 4가지 정규화 지표 가중평균 구하기
-average_abs_df = pd.concat([stock_abs_df, gold_abs_df, house_abs_df, bond_abs_df], axis=1)
+# average_abs_df = pd.concat([stock_abs_df, gold_abs_df, house_abs_df, bond_abs_df], axis=1)
+# average_abs_df['Average_Diff'] = average_abs_df['Stock_Diff']*0.33 + average_abs_df['Gold_Diff']*0.33 + average_abs_df['House_Diff']*0.33 + average_abs_df['Bond_Diff']*0.00
 
-average_abs_df['Average_Diff'] = average_abs_df['Stock_Diff']*0.33 + average_abs_df['Gold_Diff']*0.33 + average_abs_df['House_Diff']*0.33 + average_abs_df['Bond_Diff']*0.00
+average_abs_df = pd.concat([bond_abs_df], axis=1)
+average_abs_df['Average_Diff'] = average_abs_df['Bond_Diff']*0.33
 
 average_abs_df = pd.DataFrame(average_abs_df['Average_Diff'])
 
@@ -211,33 +249,35 @@ def Graph_Abs():
     plt.title('5-asset (' + start[2:4] + "." + start[5:7]+ "~" + end[2:4] + "." + end[5:7] + ")", fontsize=20) 
     
     plt.subplot(211)
-    plt.plot(stock_abs_df.index, stock_abs_df.Stock_Diff, color='r', linewidth = 1)
-    plt.plot(gold_abs_df.index, gold_abs_df.Gold_Diff, color='g', linewidth = 1)
-    plt.plot(house_abs_df.index, house_abs_df.House_Diff, color='b', linewidth = 1)
     plt.plot(interest_abs_df.index, interest_abs_df.Interest_Diff, color='y', linewidth = 1)
+    # plt.plot(stock_abs_df.index, stock_abs_df.Stock_Diff, color='r', linewidth = 1)
+    # plt.plot(gold_abs_df.index, gold_abs_df.Gold_Diff, color='g', linewidth = 1)
+    # plt.plot(house_abs_df.index, house_abs_df.House_Diff, color='b', linewidth = 1)
     plt.plot(bond_abs_df.index, bond_abs_df.Bond_Diff, color='m', linewidth =1)
-    # plt.plot(average_abs_df.index, average_abs_df.Average_Diff, color = 'b', linewidth = 1)
+    ## plt.plot(average_abs_df.index, average_abs_df.Average_Diff, color = 'b', linewidth = 1)
 
     # x축, y축, 각 데이터의 이름 설정
     plt.ylabel('$', fontsize=12)
     plt.xlabel('Date', fontsize=12)
-    plt.legend(['주식', '금', '부동산', '금리','채권'], fontsize=12, loc='best')
-
+    # plt.legend(['금리', '주식', '금', '부동산','채권'], fontsize=12, loc='best')
+    plt.legend(['금리', '채권'], fontsize=12, loc='best')
 
     plt.subplot(212)
     plt.plot(interest_abs_df.index, interest_abs_df.Interest_Diff, color='y', linewidth = 1)
     plt.plot(average_abs_df.index, average_abs_df.Average_Diff, color = 'b', linewidth = 1)
     plt.ylabel('$', fontsize=12)
     plt.xlabel('Date', fontsize=12)
-    plt.legend(['금리','평균'], fontsize=12, loc='best')
+    # plt.legend(['금리','평균'], fontsize=12, loc='best')
+    plt.legend(['금리','채권'], fontsize=12, loc='best')
     plt.show()
 
 
     plt.plot(cycle_abs_df.index, cycle_abs_df.Cycle_Curve, color='y', linewidth = 1)
-    plt.hlines(0, cycle_abs_df.index[0], cycle_abs_df.index[len(cycle_df)-1], color='black', linewidth=3)
+    plt.hlines(0, cycle_abs_df.index[0], cycle_abs_df.index[len(cycle_abs_df)-1], color='black', linewidth=1)
     plt.ylabel('$', fontsize=12)
     plt.xlabel('Date', fontsize=12)
-    plt.legend(['사이클(금리 - 4지표평균)'], fontsize=12, loc='best')
+    # plt.legend(['사이클(금리 - 4지표평균)'], fontsize=12, loc='best')
+    plt.legend(['사이클(금리 - 채권 정규화)'], fontsize=12, loc='best')
     plt.show()
 Graph_Abs()
 

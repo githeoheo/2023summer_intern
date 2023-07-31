@@ -113,8 +113,8 @@ gdp_df = gdp_df.dropna(axis=1)
 #--practice.py 참고--#
 
 #######---------------------------------------- 그래프그리기 ----------------------------------------------------######
-### 표준화(0~1)
-scaler = MinMaxScaler(feature_range=(-100,100))
+### 정규화(-1 ~ 1)
+scaler = MinMaxScaler(feature_range=(-1,1))
 
 gdp_close_df = pd.DataFrame(data=gdp_df.GDP)
 scaler.fit(gdp_close_df)
