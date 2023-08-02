@@ -48,6 +48,9 @@ debt_cycle_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Juns
 debt_cycle_df.loc[:,'Date'] = pd.to_datetime(debt_cycle_df.Date)
 debt_cycle_df = debt_cycle_df.set_index('Date')
 debt_cycle_df = debt_cycle_df.drop(['Debt', 'y'], axis = 1)
+# print(debt_cycle_df.head())
+
+
 
 # split data
 forecast_year = 20 # 마지막 forecast_year 년 예측
@@ -60,9 +63,13 @@ mlflow.set_experiment("ARIMA")
 mlflow.autolog()
 # Step 3: Define the ARIMA model
 # Define a list of combinations for p, d, and q that you want to try
-p_values = [0, 1, 2]
-d_values = [1, 2]
-q_values = [0, 1, 2]
+# p_values = [0, 1, 2]
+# d_values = [1, 2]
+# q_values = [0, 1, 2]
+
+p_values = [1]
+d_values = [0,1,2]
+q_values = [1]
 
 # Loop through different combinations of p, d, and q
 for p in p_values:
@@ -75,6 +82,7 @@ for p in p_values:
             # Start a new MLflow run
             with mlflow.start_run() as run :
                 # Define the ARIMA model
+                df_train.index = pd.DatetimeIndex(df_train.index.values, freq=df_train.index.inferred_freq)
                 model_arima = sm.tsa.ARIMA(df_train, order=(p, d, q))
                 results_arima = model_arima.fit()
                 # forecast_a = results_arima.forecast(steps=forecast_year, typ = 'levels')
