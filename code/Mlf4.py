@@ -1,4 +1,6 @@
-#세진이 코드
+### arima코드에 사이클 외에 다른 데이터 넣어보기
+### ARIMA에 기존 사이클 데이터를 사용하였을 때 값이 원하는대로 나오지 않아서 나스닥 주가 데이터를 사용해 보기로 했다.
+### 결과는 기존 사이클 데이터와 비슷하게 나왔고 ARIMA 결과 원인을 알 수 있게 되었다.
 
 import pandas as pd
 # pd.options.plotting.backend = "plotly"
@@ -30,6 +32,7 @@ from tqdm import tqdm
 
 import mlflow
 
+
 def Setting():
     # 전역으로 그래프 사이즈 고정
     plt.rcParams["figure.figsize"] = (12,5)
@@ -42,63 +45,81 @@ def Setting():
 Setting()
 
 # Step 1: Load the data
-debt_cycle_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/debt_cycle.csv')
+debt_cycle_df = pd.read_csv('C:/Users/user/Desktop/Securities_Data_Analysis(Junsu)/dataset/original_data/나스닥(1985~2023)_yfinance.csv')
+
 
 # Step 2: Preprocess the data (if needed)
 debt_cycle_df.loc[:,'Date'] = pd.to_datetime(debt_cycle_df.Date)
 debt_cycle_df = debt_cycle_df.set_index('Date')
-debt_cycle_df = debt_cycle_df.drop(['Debt', 'y'], axis = 1)
+debt_cycle_df = debt_cycle_df.drop(['Open', 'High', 'Low', 'Adj Close', 'Volume'], axis = 1)
+# print(debt_cycle_df.head())
+
+debt_cycle_df['Close'] = debt_cycle_df['Close'].diff().dropna()
 print(debt_cycle_df.head())
 
-
-
 # split data
-forecast_year = 20 # 마지막 forecast_year 년 예측
+forecast_year = 54 # 마지막 forecast_year 년 예측,  월별데이터는 1년 예측하려면 12줘야함
 df_train = debt_cycle_df.iloc[:-forecast_year]
 df_test = debt_cycle_df.iloc[len(df_train):]
 
-# For simplicity, we assume the data is already preprocessed and stationary.
-# Set the active experiment
-mlflow.set_experiment("ARIMA")
+
+# from statsmodels.tsa.stattools import adfuller
+
+# def adfuller_test(sales):
+#     result=adfuller(sales)
+#     labels = ['ADF Test Statistic','p-value','#Lags Used','Number of Observations Used']
+#     for value,label in zip(result,labels):
+#         print(label+' : '+str(value) )
+#     if result[1] <= 0.05:
+#         print("strong evidence against the null hypothesis(Ho), reject the null hypothesis. Data has no unit root and is stationary")
+#     else:
+#         print("weak evidence against null hypothesis, time series has a unit root, indicating it is non-stationary ")
+
+
+# plt.plot( debt_cycle_df['Close'].diff().dropna(),label = "df의 사이클", color = 'r')
+# plt.show()
+# adfuller_test(debt_cycle_df['Close'].diff().dropna())
+
+
+
+
+
+
+
+mlflow.set_experiment("New data ARIMA")
 mlflow.autolog()
-# Step 3: Define the ARIMA model
-# Define a list of combinations for p, d, and q that you want to try
-# p_values = [0, 1, 2]
+
+# p_values = [0, 1]
 # d_values = [1, 2]
-# q_values = [0, 1, 2]
+# q_values = [0, 1]
 
 p_values = [1]
-d_values = [0,1,2]
+d_values = [0, 1, 2]
 q_values = [1]
 
-# Loop through different combinations of p, d, and q
 for p in p_values:
     for d in d_values:
         for q in q_values:
-            # Skip combinations where d=0 (non-stationary)
-            if d == 0:
-                continue
-            
-            # Start a new MLflow run
+            # if d == 0:
+            #     continue
+             
             with mlflow.start_run() as run :
-                # Define the ARIMA model
                 df_train.index = pd.DatetimeIndex(df_train.index.values, freq=df_train.index.inferred_freq)
-                model_arima = sm.tsa.ARIMA(df_train, order=(p, d, q))
-                results_arima = model_arima.fit()
-                # forecast_a = results_arima.forecast(steps=forecast_year, typ = 'levels')
-                forecast_a = results_arima.forecast(steps=forecast_year)
-                # Make predictions using the ARIMA model
-                # predictions_arima = results_arima.predict(start=len(df_train), end=len(debt_cycle_df), typ='levels')
-                predictions_arima = results_arima.predict(start=len(df_train), end=len(debt_cycle_df))
-                
-                # Evaluate the model using mean squared error
-                mape_arima = np.mean(np.abs((df_test.Cycle - predictions_arima) / df_test.Cycle)) * 100
+                model=ARIMA(df_train, order=(p, d, q))
+                model_fit=model.fit() # 학습시키기
+                print(model_fit.summary())
+                # df['forecast_ARIMA']=model_fit.predict(start="2023-01-01",end="2198-01-01",dynamic=True)
+                predictions_arima = model_fit.predict(start=len(df_train), end=len(debt_cycle_df))
 
-                # Log ARIMA hyperparameters and metrics for this combination
+                 # Evaluate the model using mean squared error
+                mape_arima = np.mean(np.abs((df_test.Close - predictions_arima) / df_test.Close)) * 100
+
+
                 mlflow.log_param("ARIMA_p", p)
                 mlflow.log_param("ARIMA_d", d)
                 mlflow.log_param("ARIMA_q", q)
                 mlflow.log_metric("MAPE", mape_arima)
+
                 
                 # Save the model using MLflow's model logging capability
                 plot_filename = "arima_predictions_plot.png"
@@ -111,7 +132,7 @@ for p in p_values:
                 plt.grid()
                 plt.savefig(plot_filename)
                 plt.clf()
-                # Log the plot as an artifact in MLflow
                 mlflow.log_artifact(plot_filename)
-# End the MLflow run
+
 mlflow.end_run()
+
