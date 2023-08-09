@@ -1,3 +1,5 @@
+## 잡다한거 종합적으로 다 모아놓음
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.pylab import rcParams
