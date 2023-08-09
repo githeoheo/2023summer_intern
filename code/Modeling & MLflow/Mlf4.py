@@ -1,6 +1,7 @@
 ### arima코드에 사이클 외에 다른 데이터 넣어보기
 ### ARIMA에 기존 사이클 데이터를 사용하였을 때 값이 원하는대로 나오지 않아서 나스닥 주가 데이터를 사용해 보기로 했다.
 ### 결과는 기존 사이클 데이터와 비슷하게 나왔고 ARIMA 결과 원인을 알 수 있게 되었다.
+###
 
 import pandas as pd
 # pd.options.plotting.backend = "plotly"
